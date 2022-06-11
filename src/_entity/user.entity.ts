@@ -16,21 +16,21 @@ export class User {
     @ApiProperty({ description: '유저 아이디' })
     @IsString()
     @Column('varchar', {
-        name: 'uid',
+        name: 'username',
         unique: true,
         nullable: false,
         length: 30
     })
-    uid: string;
+    username: string;
 
     @ApiProperty({ description: '유저 패스워드' })
     @IsString()
     @Column('varchar', {
-        name: 'upw',
+        name: 'password',
         nullable: false,
         length: 30
     })
-    upw: string;
+    password: string;
 
     @ApiProperty({ description: '팔로잉' })
     @IsArray()

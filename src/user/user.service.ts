@@ -1,4 +1,4 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, Inject, Injectable } from '@nestjs/common';
 import { User } from 'src/_entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,7 +13,7 @@ export class UserService {
 
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
         const user = await this.userRepository.findOne({
-            where: { uid: userData.uid }
+            where: { username: userData.username }
         })
 
         if(user) {
@@ -26,16 +26,15 @@ export class UserService {
         return result
     }
 
-    async findUser(userData: LoginUserDto): Promise<object> {
+    async findUser(username: string, password: string): Promise<object> {
+        console.log('User Service')
+        
         const user = await this.userRepository.findOne({
-            where: {
-                uid: userData.uid,
-                upw: userData.upw
-            }
+            where: { username, password }
         })
 
         if(!user) {
-            throw new HttpException('아이디 혹은 비밀번호가 일치하지 않습니다.', 401)
+            throw new ForbiddenException('아이디와 비밀번호를 다시 확인해주세요.')
         }
 
         return user

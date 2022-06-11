@@ -10,15 +10,25 @@ export class AuthService {
         private readonly userService: UserService
     ) {}
 
-    async createJwtToken(userData: LoginUserDto) {
-        const user = await this.userService.findUser(userData)
+    // async createJwtToken(userData: LoginUserDto) {
+    //     const user = await this.userService.findUser(userData)
 
-        const jwtToken = this.jwtService.sign({ userId: user['id'] })
+    //     const jwtToken = this.jwtService.sign({ userId: user['id'] })
 
-        return jwtToken
+    //     return jwtToken
+    // }
+
+    async validateUser(username: string, password: string): Promise<any> {
+        console.log('Auth service - validateUser')
+
+        const user = await this.userService.findUser(username, password)
+        
+        return user
     }
 
-    async validateUser(userData): Promise<any> {
-        const user = await this.userService.findUser(userData)
+    async login(user: any) {
+        console.log('Auth service - login')
+
+        return this.jwtService.sign(user.id)
     }
 }
