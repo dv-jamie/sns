@@ -11,9 +11,8 @@ export class PostService {
         private postRepository: Repository<Post>
     ) {}
 
-    async getPostByUser(user: object): Promise<Post[]> {
+    async getPostByUser(userId: number): Promise<Post[]> {
         console.log('Post service - getPostByUser')
-        console.log(user['id'])
 
         // return await this.postRepository.find({
         //     relations: ['writer'],
@@ -22,15 +21,15 @@ export class PostService {
 
         return await this.postRepository
             .createQueryBuilder('post')
-            .where('writerId = :id', { id: user['id'] })
+            .where('writerId = :id', { id: userId })
             .getRawMany()
     }
 
-    async createPost(user: object, postData: CreatePostDto): Promise<Post> {
+    async createPost(userId: number, postData: CreatePostDto): Promise<Post> {
         console.log('Post service - createPost')
 
         return await this.postRepository.save({
-            writer: user['id'],
+            writer: userId,
             ...postData,
         })
     }

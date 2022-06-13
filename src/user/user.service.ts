@@ -28,7 +28,7 @@ export class UserService {
         return result
     }
 
-    async findUser(username: string, password: string): Promise<object> {
+    async findUser(username: string, password: string): Promise<LoginUserDto> {
         console.log('User Service - fundUser')
         
         const user = await this.userRepository.findOne({
@@ -42,7 +42,7 @@ export class UserService {
         return user
     }
 
-    async toggleFollow(reqUserId: number, otherUserId: number) {
+    async toggleFollow(reqUserId: number, otherUserId: number): Promise<boolean> {
         console.log('User Service - toggleFollow')
 
         const reqUserWithOtherUser = await this.userRepository.findOne({

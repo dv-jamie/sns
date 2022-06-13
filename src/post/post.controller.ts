@@ -14,7 +14,7 @@ export class PostController {
     async getPostByUser(
         @Request() req,
     ): Promise<object> {
-        return await this.postService.getPostByUser(req.user)
+        return await this.postService.getPostByUser(req.user.id)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -24,11 +24,11 @@ export class PostController {
         @Request() req,
         @Body() postData // 여기에 CreatedPostDto 추가하면 에러, service 인자에서는 에러 x
     ): Promise<object> {
-        return await this.postService.createPost(req.user, postData)
+        return await this.postService.createPost(req.user.id, postData)
     }
 
     @UseGuards(JwtAuthGuard)
-    @Patch('/:id')
+    @Patch(':id')
     @ApiOperation({ summary: '게시글 수정' })
     async updatePost(
         @Param('id') postId: number,
@@ -38,7 +38,7 @@ export class PostController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete('/:id')
+    @Delete(':id')
     @ApiOperation({ summary: '게시글 삭제' })
     async deletePost(
         @Param('id') postId: number,

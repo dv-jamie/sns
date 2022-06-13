@@ -23,7 +23,7 @@ export class UserController {
     async toggleFollow(
         @Request() req,
         @Param('id') otherUserId: number,
-    ) {
+    ): Promise<boolean> {
         return await this.userService.toggleFollow(req.user.id, otherUserId)
     }
 }
