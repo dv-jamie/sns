@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, JoinColumn, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, JoinColumn, JoinTable, ManyToOne } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Hashtag } from './hashtag.entity';
 import { User } from './user.entity';
@@ -29,7 +29,7 @@ export class Post {
 
     @ApiProperty({ description: '게시글 작성자' })
     @IsNumber()
-    @ManyToMany((type) => User, (user) => user.posts)
+    @ManyToOne((type) => User, (user) => user.posts)
     writer: User;
 
     @ApiProperty({ description: '댓글 리스트' })

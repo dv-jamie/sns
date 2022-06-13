@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsString } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Post } from './post.entity';
 
@@ -45,7 +45,7 @@ export class User {
 
     @ApiProperty({ description: '등록한 게시글 리스트' })
     @IsArray()
-    @ManyToMany((type) => Post, (post) => post.writer)
+    @OneToMany((type) => Post, (post) => post.writer)
     posts: Post[]
 
     @ApiProperty({ description: '등록한 댓글 리스트' })
