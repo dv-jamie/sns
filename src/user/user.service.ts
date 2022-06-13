@@ -12,6 +12,8 @@ export class UserService {
     ) {}
 
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
+        console.log('User Service - createUser')
+
         const user = await this.userRepository.findOne({
             where: { username: userData.username }
         })
@@ -27,7 +29,7 @@ export class UserService {
     }
 
     async findUser(username: string, password: string): Promise<object> {
-        console.log('User Service')
+        console.log('User Service - fundUser')
         
         const user = await this.userRepository.findOne({
             where: { username, password }
@@ -39,5 +41,41 @@ export class UserService {
 
         return user
     }
-    
+
+    async toggleFollow(reqUserId: number, otherUserId: number) {
+        console.log('User Service - toggleFollow')
+
+        const reqUserWithOtherUser = await this.userRepository.findOne({
+            where: {
+                id: reqUserId,
+            },
+            relations: ['followings']
+        })
+
+        const otherUser = await this.userRepository.findOne({
+            where: {
+                id: otherUserId
+            }
+        })
+
+        const followingUserList = (reqUserWithOtherUser.followings.filter(
+            followingUser => followingUser.id === otherUserId
+        ))
+
+        if(followingUserList.length > 0) {
+            console.log("상대방 팔로우 중 => 언팔로우")
+
+            reqUserWithOtherUser.followings = reqUserWithOtherUser.followings.filter(
+                followingUser => followingUser.id !== otherUserId
+            )
+            await this.userRepository.save(reqUserWithOtherUser)
+            return true
+        } else {
+            console.log("팔로우 안하는 중 => 팔로우")
+
+            reqUserWithOtherUser.followings = [...reqUserWithOtherUser.followings, otherUser]
+            await this.userRepository.save(reqUserWithOtherUser)
+            return true
+        }
+    }
 }

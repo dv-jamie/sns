@@ -34,14 +34,19 @@ export class User {
 
     @ApiProperty({ description: '팔로잉' })
     @IsArray()
-    @ManyToMany((type) => User, (user) => user.follower)
-    @JoinTable()
-    following: User[]
+    @ManyToMany((type) => User, (user) => user.followers, {
+        cascade: true
+    })
+    @JoinTable({
+        joinColumn: { name: 'reqUserId' },
+        inverseJoinColumn: { name: 'otherUserId' }
+    })
+    followings: User[]
 
     @ApiProperty({ description: '팔로워' })
     @IsArray()
-    @ManyToMany((type) => User, (user) => user.following)
-    follower: User[]
+    @ManyToMany((type) => User, (user) => user.followings)
+    followers: User[]
 
     @ApiProperty({ description: '등록한 게시글 리스트' })
     @IsArray()
