@@ -29,7 +29,7 @@ export class Post {
 
     @ApiProperty({ description: '게시글 작성자' })
     @IsNumber()
-    @ManyToOne((type) => User, (user) => user.posts)
+    @ManyToOne((type) => User, (user) => user.posts, {eager: true})
     writer: User;
 
     @ApiProperty({ description: '댓글 리스트' })
