@@ -34,9 +34,7 @@ export class User {
 
     @ApiProperty({ description: '팔로잉' })
     @IsArray()
-    @ManyToMany((type) => User, (user) => user.followers, {
-        cascade: true
-    })
+    @ManyToMany((type) => User, (user) => user.followers)
     @JoinTable({
         joinColumn: { name: 'reqUserId' },
         inverseJoinColumn: { name: 'otherUserId' }
@@ -61,5 +59,6 @@ export class User {
     @ApiProperty({ description: '좋아요 누른 게시글 리스트' })
     @IsArray()
     @ManyToMany((type) => Post, (post) => post.likers)
+    @JoinTable()
     likes: Post[]
 }

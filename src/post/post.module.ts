@@ -6,6 +6,7 @@ import { PostService } from './post.service';
 
 @Module({
   imports: [DatabaseModule],
+  exports: [PostService],
   controllers: [PostController],
   providers: [
     ...postProviders,

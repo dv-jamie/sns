@@ -1,4 +1,5 @@
 import { ForbiddenException, HttpException, Inject, Injectable } from '@nestjs/common';
+import { Post } from 'src/_entity/post.entity';
 import { User } from 'src/_entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -8,7 +9,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 export class UserService {
     constructor(
         @Inject('USER_REPOSITORY')
-        private userRepository: Repository<User>
+        private userRepository: Repository<User>,
     ) {}
 
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
@@ -68,14 +69,45 @@ export class UserService {
             reqUserWithOtherUser.followings = reqUserWithOtherUser.followings.filter(
                 followingUser => followingUser.id !== otherUserId
             )
-            await this.userRepository.save(reqUserWithOtherUser)
-            return true
         } else {
             console.log("팔로우 안하는 중 => 팔로우")
 
             reqUserWithOtherUser.followings = [...reqUserWithOtherUser.followings, otherUser]
-            await this.userRepository.save(reqUserWithOtherUser)
-            return true
         }
+
+        await this.userRepository.save(reqUserWithOtherUser)
+        return true
+    }
+
+    async toggleLike(userId: number, post: Post): Promise<boolean> {
+        console.log('Post service - toggleLikePost')
+
+        const userWithLikes = await this.userRepository.findOne({
+            where: {
+                id: userId
+            },
+            relations: ['likes']
+        })
+
+        const likes = userWithLikes.likes.filter(
+            like => like.id === post.id
+        )
+
+        if(likes.length > 0) {
+            console.log('게시글 좋아요 중 => 취소')
+
+            userWithLikes.likes = userWithLikes.likes.filter(
+                like => like.id !== post.id
+            )
+        } else {
+            console.log('게시글 좋아요 안 함 => 좋아요')
+            
+            userWithLikes.likes = [...userWithLikes.likes, post]
+        }
+
+        await this.userRepository.save(
+            userWithLikes
+        )
+        return true
     }
 }

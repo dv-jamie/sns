@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn, JoinColumn, JoinTable, ManyToOne } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToMany,
+    CreateDateColumn,
+    JoinTable,
+    ManyToOne
+} from 'typeorm';
 import { Comment } from './comment.entity';
 import { Hashtag } from './hashtag.entity';
 import { User } from './user.entity';
@@ -42,6 +50,5 @@ export class Post {
 
     @ApiProperty({ description: '좋아요 누른 유저 리스트' })
     @ManyToMany((type) => User, (user) => user.likes)
-    @JoinTable()
     likers: User;
 }
