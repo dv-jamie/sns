@@ -7,7 +7,8 @@ import {
     ManyToMany,
     CreateDateColumn,
     JoinTable,
-    ManyToOne
+    ManyToOne,
+    OneToMany
 } from 'typeorm';
 import { Comment } from './comment.entity';
 import { Hashtag } from './hashtag.entity';
@@ -41,7 +42,7 @@ export class Post {
     writer: User;
 
     @ApiProperty({ description: '댓글 리스트' })
-    @ManyToMany((type) => Comment, (comment) => comment.post)
+    @OneToMany((type) => Comment, (comment) => comment.post)
     comments: Comment[]
 
     @ApiProperty({ description: '해시태그 리스트' })

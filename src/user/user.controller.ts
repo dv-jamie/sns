@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    UseGuards,
+    Request,
+    Param,
+    Post,
+    Body,
+    Patch,
+} from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { PostService } from 'src/post/post.service';
@@ -38,7 +46,7 @@ export class UserController {
         @Request() req,
         @Param('id') postId: number
     ): Promise<boolean> {
-        const post = await this.postService.getOnePost(postId)
+        const post = await this.postService.getPostById(postId)
         return await this.userService.toggleLike(req.user.id, post) 
     }
 }

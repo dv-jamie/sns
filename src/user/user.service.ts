@@ -43,6 +43,16 @@ export class UserService {
         return user
     }
 
+    async getUserById(userId: number): Promise<User> {
+        console.log('User Service - findUserById')
+        
+        const user = await this.userRepository.findOne({
+            where: { id: userId }
+        })
+
+        return user
+    }
+
     async toggleFollow(reqUserId: number, otherUserId: number): Promise<boolean> {
         console.log('User Service - toggleFollow')
 

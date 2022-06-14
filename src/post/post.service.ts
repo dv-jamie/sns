@@ -25,10 +25,12 @@ export class PostService {
             .getRawMany()
     }
 
-    async getOnePost(postId: number) {
-        return await this.postRepository.findOne({
+    async getPostById(postId: number): Promise<Post> {
+        const post = await this.postRepository.findOne({
             where: { id: postId }
         })
+
+        return post
     }
 
     async createPost(userId: number, postData: CreatePostDto): Promise<Post> {

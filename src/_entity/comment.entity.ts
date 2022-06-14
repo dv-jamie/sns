@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, CreateDateColumn } from 'typeorm';
+import { IsNumber } from 'class-validator';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    ManyToOne,
+    OneToMany
+} from 'typeorm';
 import { Post } from './post.entity';
 import { User } from './user.entity';
 
@@ -12,23 +20,24 @@ export class Comment {
     })
     id: number;
 
-    @ApiProperty({ description: '게시글 내용' })
+    @ApiProperty({ description: '댓글 내용' })
     @Column('varchar', {
         name: 'content',
         nullable: false,
         length: 200
     })
-    content?: string;
+    content: string;
 
     @ApiProperty({ description: '댓글 작성일' })
     @CreateDateColumn()
     createdAt: string;
 
     @ApiProperty({ description: '댓글 작성자' })
-    @ManyToMany((type) => User, (user) => user.comments)
+    @IsNumber()
+    @ManyToOne((type) => User, (user) => user.comments)
     writer: User;
 
     @ApiProperty({ description: '게시글' })
-    @ManyToMany((type) => Post, (post) => post.comments)
+    @ManyToOne((type) => Post, (post) => post.comments)
     post: Post;
 }
