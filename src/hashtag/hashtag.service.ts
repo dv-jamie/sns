@@ -11,6 +11,16 @@ export class HashtagService {
         private readonly postService: PostService
     ) {}
 
+    // *******************************
+    // async getPostsByHashtag(hashtagId: number) {
+    //     const test = await this.hashtagRepository
+    //         .createQueryBuilder('hashtag')
+    //         .leftJoinAndSelect('hashtag.hashtagId', 'hashtagId')
+    //         .getMany()
+
+    //     console.log(test)
+    // }
+
     async createHashtag(postId: number, keywords: string[]): Promise<boolean> {
 
         const post = await this.postService.getPostById(postId)
