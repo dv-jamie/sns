@@ -5,14 +5,12 @@ import {
     Param,
     Get,
     Post,
+    Patch,
     Delete,
     Body,
-    NotFoundException,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { PostService } from 'src/post/post.service';
-import { UserService } from 'src/user/user.service';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -20,8 +18,6 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 export class CommentController {
     constructor(
         private readonly commentService: CommentService,
-        private readonly userService: UserService,
-        private readonly postService: PostService
     ) {}
 
     @UseGuards(JwtAuthGuard)
@@ -30,13 +26,7 @@ export class CommentController {
     async getComments(
         @Param('id') postId: number
     ) { // : Promise<Comment[]>
-        const post = await this.postService.getPostById(postId)
-
-        if(!post) {
-            throw new NotFoundException('존재하지 않는 게시글입니다.')
-        }
-
-        return await this.commentService.getComments(post)
+        return await this.commentService.getComments(postId)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -47,14 +37,18 @@ export class CommentController {
         @Param('id') postId: number,
         @Body() commentData // created-comment-dto?
     ): Promise<boolean> {
-        const writer = await this.userService.getUserById(req.user.id)
-        const post = await this.postService.getPostById(postId)
+        return await this.commentService.createComment(req.user.id, commentData, postId)
+    }
 
-        if(!post) {
-            throw new NotFoundException('존재하지 않는 게시글입니다.')
-        }
-
-        return await this.commentService.createComment(writer, commentData, post)
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id')
+    @ApiOperation({ summary: '댓글 수정' })
+    async updateComment(
+        @Request() req,
+        @Param('id') commentId: number,
+        @Body('content') content: string
+    ): Promise<boolean> {
+        return await this.commentService.updateComment(commentId, content)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -64,12 +58,6 @@ export class CommentController {
         @Request() req,
         @Param('id') commentId: number,
     ): Promise<number> {
-        const affected = await this.commentService.deleteComment(commentId)
-
-        if(affected === 0) {
-            throw new NotFoundException('존재하지 않는 댓글입니다.')
-        }
-
-        return affected
+        return await this.commentService.deleteComment(commentId)
     }
 }
