@@ -8,7 +8,6 @@ import {
     Body,
     Patch,
     Delete,
-    NotFoundException
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -54,12 +53,6 @@ export class PostController {
     async deletePost(
         @Param('id') postId: number,
     ): Promise<number> {
-        const affected = await this.postService.deletePost(postId)
-
-        if(affected === 0) {
-            throw new NotFoundException('존재하지 않는 게시글입니다.')
-        }
-
-        return affected
+        return await this.postService.deletePost(postId)
     }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Post } from 'src/_entity/post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -59,7 +59,12 @@ export class PostService {
             .from('post')
             .where("id = :id", { id: postId })
             .execute()
+        const affected = result.affected
+        
+        if(affected === 0) {
+            throw new NotFoundException('존재하지 않는 게시글입니다.')
+        }
 
-        return result.affected
+        return affected
     }
 }
