@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    ManyToMany
+    ManyToMany,
+    JoinTable,
 } from 'typeorm';
 import { Post } from './post.entity';
-import { User } from './user.entity';
 
 @Entity()
 export class Hashtag {
@@ -18,6 +19,7 @@ export class Hashtag {
     id: number;
 
     @ApiProperty({ description: '해시태그 키워드' })
+    @IsString()
     @Column('varchar', {
         name: 'keyword',
         nullable: false,
@@ -25,7 +27,11 @@ export class Hashtag {
     })
     keyword: string
 
-    @ApiProperty({ description: '게시글' })
+    @ApiProperty({ description: '게시글 리스트' })
+    @IsNumber()
     @ManyToMany((type) => Post, (post) => post.hashtags)
-    post: Post
+    @JoinTable({
+        name: 'hashtag_post'
+    })
+    posts: Number[]
 }

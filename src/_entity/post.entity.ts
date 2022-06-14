@@ -1,12 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsObject, IsString } from 'class-validator';
 import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
     ManyToMany,
     CreateDateColumn,
-    JoinTable,
     ManyToOne,
     OneToMany
 } from 'typeorm';
@@ -37,19 +36,22 @@ export class Post {
     createdAt: string;
 
     @ApiProperty({ description: '게시글 작성자' })
-    @IsNumber()
+    @IsObject()
     @ManyToOne((type) => User, (user) => user.posts, {eager: true})
     writer: User;
 
     @ApiProperty({ description: '댓글 리스트' })
+    @IsArray()
     @OneToMany((type) => Comment, (comment) => comment.post)
     comments: Comment[]
 
     @ApiProperty({ description: '해시태그 리스트' })
-    @ManyToMany((type) => Hashtag, (hashtag) => hashtag.post)
+    @IsArray()
+    @ManyToMany((type) => Hashtag, (hashtag) => hashtag.posts)
     hashtags: Hashtag[]
 
     @ApiProperty({ description: '좋아요 누른 유저 리스트' })
+    @IsArray()
     @ManyToMany((type) => User, (user) => user.likes)
     likers: User;
 }

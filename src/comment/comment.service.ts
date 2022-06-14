@@ -10,7 +10,6 @@ export class CommentService {
     constructor(
         @Inject('COMMENT_REPOSITORY')
         private readonly commentRepository: Repository<Comment>,
-        private readonly userService: UserService,
         private readonly postService: PostService
     ) {}
 
@@ -24,7 +23,7 @@ export class CommentService {
         }
 
         return await this.commentRepository.find({
-            where: { post: { id: post.id } },
+            where: { post: postId },
             relations: ['post']
         })
     }
@@ -32,7 +31,6 @@ export class CommentService {
     async createComment(writerId: number, commentData: CreateCommentDto, postId: number): Promise<boolean> {
         console.log('Comment Service - createComments')
 
-        const writer = await this.userService.getUserById(writerId)
         const post = await this.postService.getPostById(postId)
 
         if(!post) {
@@ -40,9 +38,9 @@ export class CommentService {
         }
 
         await this.commentRepository.save({
+            writer: writerId,
+            post: postId,
             ...commentData,
-            writer,
-            post
         })
 
         return true

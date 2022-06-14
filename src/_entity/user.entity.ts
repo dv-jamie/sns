@@ -5,7 +5,6 @@ import {
     PrimaryGeneratedColumn,
     Column,
     OneToMany,
-    ManyToOne,
     ManyToMany,
     JoinTable,
 } from 'typeorm';
@@ -61,7 +60,7 @@ export class User {
 
     @ApiProperty({ description: '등록한 댓글 리스트' })
     @IsArray()
-    @ManyToOne((type) => Comment, (comment) => comment.writer)
+    @OneToMany((type) => Comment, (comment) => comment.writer)
     comments: Comment[]
 
     @ApiProperty({ description: '좋아요 누른 게시글 리스트' })

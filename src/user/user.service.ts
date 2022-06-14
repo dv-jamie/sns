@@ -1,5 +1,5 @@
-import { ForbiddenException, HttpException, Inject, Injectable } from '@nestjs/common';
-import { Post } from 'src/_entity/post.entity';
+import { ForbiddenException, HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PostService } from 'src/post/post.service';
 import { User } from 'src/_entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -10,6 +10,7 @@ export class UserService {
     constructor(
         @Inject('USER_REPOSITORY')
         private userRepository: Repository<User>,
+        private postService: PostService,
     ) {}
 
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
@@ -62,7 +63,7 @@ export class UserService {
             },
             relations: ['followings']
         })
-
+        
         const otherUser = await this.userRepository.findOne({
             where: {
                 id: otherUserId
@@ -89,8 +90,8 @@ export class UserService {
         return true
     }
 
-    async toggleLike(userId: number, post: Post): Promise<boolean> {
-        console.log('Post service - toggleLikePost')
+    async toggleLike(userId: number, postId: number): Promise<boolean> {
+        console.log('User service - toggleLikePost')
 
         const userWithLikes = await this.userRepository.findOne({
             where: {
@@ -98,6 +99,12 @@ export class UserService {
             },
             relations: ['likes']
         })
+        
+        const post = await this.postService.getPostById(postId)
+
+        if(!post) {
+            throw new NotFoundException('존재하지 않는 게시글입니다.')
+        }
 
         const likes = userWithLikes.likes.filter(
             like => like.id === post.id
@@ -115,9 +122,7 @@ export class UserService {
             userWithLikes.likes = [...userWithLikes.likes, post]
         }
 
-        await this.userRepository.save(
-            userWithLikes
-        )
+        await this.userRepository.save(userWithLikes)
         return true
     }
 }

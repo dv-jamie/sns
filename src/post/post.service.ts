@@ -46,8 +46,13 @@ export class PostService {
         console.log('Post service - updatePost')
 
         const result = await this.postRepository.update(postId, {...postData})
+        const affected = result.affected
 
-        return result.affected
+        if(affected === 0) {
+            throw new NotFoundException('존재하지 않는 게시글입니다.')
+        }
+
+        return affected
     }
 
     async deletePost(postId: number): Promise<number> {

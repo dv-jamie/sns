@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { PostService } from 'src/post/post.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
@@ -17,7 +16,6 @@ import { UserService } from './user.service';
 export class UserController {
     constructor (
         private readonly userService: UserService,
-        private readonly postService: PostService
     ) {}
 
     @Post('create-user')
@@ -46,7 +44,6 @@ export class UserController {
         @Request() req,
         @Param('id') postId: number
     ): Promise<boolean> {
-        const post = await this.postService.getPostById(postId)
-        return await this.userService.toggleLike(req.user.id, post) 
+        return await this.userService.toggleLike(req.user.id, postId)
     }
 }
