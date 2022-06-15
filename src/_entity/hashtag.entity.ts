@@ -33,5 +33,5 @@ export class Hashtag {
     @JoinTable({
         name: 'hashtag_post'
     })
-    posts: Number[]
+    posts: Post[]
 }

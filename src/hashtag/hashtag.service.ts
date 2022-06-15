@@ -11,15 +11,18 @@ export class HashtagService {
         private readonly postService: PostService
     ) {}
 
-    // *******************************
-    // async getPostsByHashtag(hashtagId: number) {
-    //     const test = await this.hashtagRepository
-    //         .createQueryBuilder('hashtag')
-    //         .leftJoinAndSelect('hashtag.hashtagId', 'hashtagId')
-    //         .getMany()
+    async getHashtagsByPost(postId: number): Promise<Hashtag[]> {
+        const hashtags = await this.hashtagRepository.find({
+            where: {
+                posts: {
+                    id: postId
+                }
+            },
+            relations: ['posts']
+        })
 
-    //     console.log(test)
-    // }
+        return hashtags
+    }
 
     async createHashtag(postId: number, keywords: string[]): Promise<boolean> {
 

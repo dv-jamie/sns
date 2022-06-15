@@ -33,6 +33,19 @@ export class PostService {
         return post
     }
 
+    async getPostByHashtag(hashtagId: number): Promise<Post[]> {
+        const posts = await this.postRepository.find({
+            where: {
+                hashtags: {
+                    id: hashtagId
+                }
+            },
+            relations: ['hashtags']
+        })
+
+        return posts
+    }
+
     async createPost(userId: number, postData: CreatePostDto): Promise<Post> {
         console.log('Post service - createPost')
 

@@ -28,6 +28,26 @@ export class PostController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    @ApiOperation({ summary: '하나의 게시글 불러오기' })
+    async getPostById(
+        @Request() req,
+        @Param('id') postId: number
+    ): Promise<object> {
+        return await this.postService.getPostById(postId)
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/hashtag/:id')
+    @ApiOperation({ summary: '해시태그별 게시글 불러오기' })
+    async getPostByHashtag(
+        @Request() req,
+        @Param('id') hashtagId: number
+    ): Promise<object> {
+        return await this.postService.getPostByHashtag(hashtagId)
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post()
     @ApiOperation({ summary: '게시글 등록' })
     async createPost(
