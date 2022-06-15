@@ -1,9 +1,11 @@
+import * as bcrypt from 'bcrypt'
 import { ForbiddenException, HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PostService } from 'src/post/post.service';
 import { User } from 'src/_entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { bcryptConstant } from 'src/_common/constants';
 
 @Injectable()
 export class UserService {
@@ -16,6 +18,7 @@ export class UserService {
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
         console.log('User Service - createUser')
 
+        const hash = await bcrypt.hash(userData.password, bcryptConstant.saltOrRounds)
         const user = await this.userRepository.findOne({
             where: { username: userData.username }
         })
@@ -25,22 +28,31 @@ export class UserService {
         }
 
         const result = await this.userRepository.save({
-            ...userData
+            username: userData.username,
+            password: hash
         })
+        
         return result
     }
 
     async findUser(username: string, password: string): Promise<LoginUserDto> {
-        console.log('User Service - fundUser')
-        
+        console.log('User Service - findUser')
+
         const user = await this.userRepository.findOne({
-            where: { username, password }
+            where: { username }
         })
-
+        
         if(!user) {
-            throw new ForbiddenException('아이디와 비밀번호를 다시 확인해주세요.')
+            throw new ForbiddenException('회원정보를 다시 확인해주세요.')
         }
+        
+        const hashedPassword = user.password
+        const isMatch = await bcrypt.compare(password, hashedPassword)
 
+        if(!isMatch) {
+            throw new ForbiddenException('회원정보를 다시 확인해주세요.')
+        }
+        
         return user
     }
 
