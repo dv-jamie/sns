@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ResponseProp } from 'src/_common/protocol';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
@@ -33,7 +34,7 @@ export class UserController {
     async toggleFollow(
         @Request() req,
         @Param('id') otherUserId: number,
-    ): Promise<boolean> {
+    ): Promise<ResponseProp> {
         return await this.userService.toggleFollow(req.user.id, otherUserId)
     }
 

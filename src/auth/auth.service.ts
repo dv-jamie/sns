@@ -17,10 +17,10 @@ export class AuthService {
     //     return jwtToken
     // }
 
-    async validateUser(username: string, password: string): Promise<any> {
+    async validateUser(userName: string, password: string): Promise<any> {
         console.log('Auth service - validateUser')
 
-        const user = await this.userService.findUser(username, password)
+        const user = await this.userService.findUser(userName, password)
         
         return user
     }

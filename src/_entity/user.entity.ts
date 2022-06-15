@@ -23,12 +23,12 @@ export class User {
     @ApiProperty({ description: '유저 아이디' })
     @IsString()
     @Column('varchar', {
-        name: 'username',
+        name: 'userName',
         unique: true,
         nullable: false,
         length: 30
     })
-    username: string;
+    userName: string;
 
     @ApiProperty({ description: '유저 패스워드' })
     @IsString()

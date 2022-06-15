@@ -36,22 +36,22 @@ export class Post {
     createdAt: string;
 
     @ApiProperty({ description: '게시글 작성자' })
-    @IsObject()
+    @IsNumber()
     @ManyToOne((type) => User, (user) => user.posts, {eager: true})
-    writer: User;
+    writer: number;
 
     @ApiProperty({ description: '댓글 리스트' })
     @IsArray()
     @OneToMany((type) => Comment, (comment) => comment.post)
-    comments: Comment[]
+    comments?: Comment[]
 
     @ApiProperty({ description: '해시태그 리스트' })
     @IsArray()
     @ManyToMany((type) => Hashtag, (hashtag) => hashtag.posts)
-    hashtags: Hashtag[]
+    hashtags?: Hashtag[]
 
     @ApiProperty({ description: '좋아요 누른 유저 리스트' })
     @IsArray()
     @ManyToMany((type) => User, (user) => user.likes)
-    likers: User;
+    likers?: User;
 }

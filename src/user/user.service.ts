@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { bcryptConstant } from 'src/_common/constants';
+import { ResponseProp } from 'src/_common/protocol';
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,7 @@ export class UserService {
 
         const hash = await bcrypt.hash(userData.password, bcryptConstant.saltOrRounds)
         const user = await this.userRepository.findOne({
-            where: { username: userData.username }
+            where: { userName: userData.userName }
         })
 
         if(user) {
@@ -28,18 +29,18 @@ export class UserService {
         }
 
         const result = await this.userRepository.save({
-            username: userData.username,
+            userName: userData.userName,
             password: hash
         })
         
         return result
     }
 
-    async findUser(username: string, password: string): Promise<LoginUserDto> {
+    async findUser(userName: string, password: string): Promise<LoginUserDto> {
         console.log('User Service - findUser')
 
         const user = await this.userRepository.findOne({
-            where: { username }
+            where: { userName }
         })
         
         if(!user) {
@@ -66,40 +67,50 @@ export class UserService {
         return user
     }
 
-    async toggleFollow(reqUserId: number, otherUserId: number): Promise<boolean> {
+    async toggleFollow(reqUserId: number, otherUserId: number): Promise<ResponseProp> {
         console.log('User Service - toggleFollow')
 
-        const reqUserWithOtherUser = await this.userRepository.findOne({
-            where: {
-                id: reqUserId,
-            },
-            relations: ['followings']
-        })
-        
-        const otherUser = await this.userRepository.findOne({
-            where: {
-                id: otherUserId
+        try {
+            const reqUserWithOtherUser = await this.userRepository.findOne({
+                where: {
+                    id: reqUserId,
+                },
+                relations: ['followings']
+            })
+            
+            const otherUser = await this.userRepository.findOne({
+                where: {
+                    id: otherUserId
+                }
+            })
+    
+            const followingUserList = (reqUserWithOtherUser.followings.filter(
+                followingUser => followingUser.id === otherUserId
+            ))
+    
+            if(followingUserList.length > 0) {
+                console.log("상대방 팔로우 중 => 언팔로우")
+    
+                reqUserWithOtherUser.followings = reqUserWithOtherUser.followings.filter(
+                    followingUser => followingUser.id !== otherUserId
+                )
+            } else {
+                console.log("팔로우 안하는 중 => 팔로우")
+    
+                reqUserWithOtherUser.followings = [...reqUserWithOtherUser.followings, otherUser]
             }
-        })
-
-        const followingUserList = (reqUserWithOtherUser.followings.filter(
-            followingUser => followingUser.id === otherUserId
-        ))
-
-        if(followingUserList.length > 0) {
-            console.log("상대방 팔로우 중 => 언팔로우")
-
-            reqUserWithOtherUser.followings = reqUserWithOtherUser.followings.filter(
-                followingUser => followingUser.id !== otherUserId
-            )
-        } else {
-            console.log("팔로우 안하는 중 => 팔로우")
-
-            reqUserWithOtherUser.followings = [...reqUserWithOtherUser.followings, otherUser]
+    
+            await this.userRepository.save(reqUserWithOtherUser)
+             
+            return {
+                status: 200,
+                result: {
+                    success: true
+                }
+            };
+        } catch(e) {
+            console.log(e)
         }
-
-        await this.userRepository.save(reqUserWithOtherUser)
-        return true
     }
 
     async toggleLike(userId: number, postId: number): Promise<boolean> {

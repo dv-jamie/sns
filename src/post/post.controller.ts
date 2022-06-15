@@ -52,7 +52,7 @@ export class PostController {
     @ApiOperation({ summary: '게시글 등록' })
     async createPost(
         @Request() req,
-        @Body() postData // 여기에 CreatedPostDto 추가하면 에러, service 인자에서는 에러 x
+        @Body() postData: {content: string} // 여기에 CreatedPostDto 추가하면 에러, service 인자에서는 에러 x
     ): Promise<object> {
         return await this.postService.createPost(req.user.id, postData)
     }

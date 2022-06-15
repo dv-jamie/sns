@@ -22,7 +22,7 @@ export class PostService {
         return await this.postRepository
             .createQueryBuilder('post')
             .where('writerId = :id', { id: userId })
-            .getRawMany()
+            .getMany()
     }
 
     async getPostById(postId: number): Promise<Post> {
@@ -46,12 +46,12 @@ export class PostService {
         return posts
     }
 
-    async createPost(userId: number, postData: CreatePostDto): Promise<Post> {
+    async createPost(userId: number, postData: {content: string}): Promise<Post> {
         console.log('Post service - createPost')
 
         return await this.postRepository.save({
             writer: userId,
-            ...postData,
+            content: postData.content
         })
     }
     

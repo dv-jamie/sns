@@ -39,6 +39,7 @@ export class HashtagService {
                 where: { keyword }
             })
 
+            let hashtagPost;
             // 해시태그가 없을 경우에만 추가
             if(!hashtagId) {
                 const insertResult = await this.hashtagRepository
@@ -48,25 +49,29 @@ export class HashtagService {
                     .values({ keyword })
                     .execute()
 
-                hashtagId = insertResult.identifiers[0].id
+                hashtagId = insertResult.identifiers[0].id;
+            } else {
+                hashtagPost = await this.hashtagRepository
+                .createQueryBuilder('hashtag')
+                .leftJoinAndSelect('hashtag.posts', 'posts')
+                .where(`hashtag.id = ${hashtagId.id}`
+                )
+                .andWhere(`posts.id = ${postId}`)
+                .getOne()
+
             }
 
             // *** 해시태그 id + 게시글 id 중복일 때?
-            // const hashtagPost = await this.hashtagRepository
-            //     .createQueryBuilder()
-            //     .select('hashtag_post')
-            //     .from('hashtag_post', 'hashtag_post')
-            //     .where({ hashtagId, postId })
-            //     .getOne()
-            
-            // console.log(hashtagPost) // null
+            console.log('hashtagPost: ', hashtagPost) // null
 
-            await this.hashtagRepository
-                .createQueryBuilder()
-                .insert()
-                .into('hashtag_post')
-                .values({ hashtagId, postId })
-                .execute()
+            if (!hashtagPost) {
+                await this.hashtagRepository
+                    .createQueryBuilder()
+                    .insert()
+                    .into('hashtag_post')
+                    .values({ hashtagId, postId })
+                    .execute()
+            }
         }
 
         return true

@@ -3,5 +3,5 @@ import { Post } from "src/_entity/post.entity";
 
 export class CreatePostDto extends PickType(Post, [
     'content',
-    'writer'
+    // 'writer'
 ] as const) {}
