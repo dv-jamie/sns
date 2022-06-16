@@ -1,10 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseProp } from 'src/_common/protocol';
-import { Hashtag } from 'src/_entity/hashtag.entity';
 import { PostEntity } from 'src/_entity/post.entity';
 import { Repository } from 'typeorm';
-import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
@@ -37,18 +35,18 @@ export class PostService {
         return post
     }
 
-    async getPostByHashtag(hashtagId: number): Promise<PostEntity[]> {
-        const posts = await this.postRepository.find({
-            where: {
-                hashtags: {
-                    id: hashtagId
-                }
-            },
-            relations: ['hashtags']
-        })
+    // async getPostByHashtag(hashtagId: number): Promise<PostEntity[]> {
+    //     const posts = await this.postRepository.find({
+    //         where: {
+    //             hashtags: {
+    //                 id: hashtagId
+    //             }
+    //         },
+    //         relations: ['hashtags']
+    //     })
 
-        return posts
-    }
+    //     return posts
+    // }
 
     async createPost(
         userId: number,
@@ -63,9 +61,19 @@ export class PostService {
         })
         const createdPostId = result.id
 
-        // if(hashtags.length > 0) {
-        //     await this.hashtagService.createHashtag(createdPostId, hashtags)
-        // }
+        if(!hashtags) {
+            return {
+                status: 400,
+                result: {
+                    error: '해시태그는 배열 형태여야 합니다.'
+                }
+            }
+        }
+
+        // 해시태그가 있을 경우에만 실행
+        if(hashtags.length > 0) {
+            await this.hashtagService.createHashtag(createdPostId, hashtags)
+        }
 
         return {
             status: 200,

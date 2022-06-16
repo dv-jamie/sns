@@ -9,12 +9,20 @@ import {
     Patch,
     Delete,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiOkResponse,
+    ApiOperation,
+    ApiParam,
+    ApiTags
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseDto } from 'src/_common/dto/response.dto';
 import { Hashtag } from 'src/_entity/hashtag.entity';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
 
 @Controller('post')
@@ -47,26 +55,27 @@ export class PostController {
         return await this.postService.getPostById(postId)
     }
 
-    @UseGuards(JwtAuthGuard)
-    @Get(':id/hashtag')
-    @ApiOperation({ summary: '게시글별 해시태그 불러오기' })
-    @ApiOkResponse({ description: '해시태그 불러오기 완료', type: ResponseDto })
-    async getPostByHashtag(
-        @Request() req,
-        @Param('id') hashtagId: number
-    ): Promise<Hashtag[]> {
-        return await this.hashtagService.getHashtagsByPost(hashtagId)
-    }
+    // @UseGuards(JwtAuthGuard)
+    // @Get(':id/hashtag')
+    // @ApiOperation({ summary: '게시글별 해시태그 불러오기' })
+    // @ApiParam({ name: 'id', description: '해당 게시글 아이디' })
+    // @ApiOkResponse({ description: '해시태그 불러오기 완료', type: ResponseDto })
+    // async getPostByHashtag(
+    //     @Request() req,
+    //     @Param('id') postId: number
+    // ): Promise<Hashtag[]> {
+    //     return await this.hashtagService.getHashtagsByPost(postId)
+    // }
 
     @UseGuards(JwtAuthGuard)
     @Post()
     @ApiOperation({ summary: '게시글 등록' })
-    @ApiBody({ description: '게시글 내용', type: CreatePostDto })
+    @ApiBody({ description: '게시글 내용과 해시태그 배열', type: CreatePostDto })
     @ApiOkResponse({ description: '게시글 등록 완료', type: ResponseDto })
     async createPost(
         @Request() req,
         @Body('content') content: string,
-        @Body('keywords') hashtags: string[]
+        @Body('hashtags') hashtags: string[]
     ): Promise<object> {
         return await this.postService.createPost(req.user.id, content, hashtags)
     }
@@ -74,6 +83,7 @@ export class PostController {
     @UseGuards(JwtAuthGuard)
     @Patch(':id')
     @ApiOperation({ summary: '게시글 수정' })
+    @ApiBody({ description: '게시글 내용과 해시태그 배열', type: UpdatePostDto })
     @ApiOkResponse({ description: '게시글 수정 완료', type: ResponseDto })
     async updatePost(
         @Param('id') postId: number,

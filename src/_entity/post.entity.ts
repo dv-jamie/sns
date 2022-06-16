@@ -48,7 +48,7 @@ export class PostEntity {
     @ApiProperty({ description: '해시태그 리스트' })
     @IsArray()
     @ManyToMany((type) => Hashtag, (hashtag) => hashtag.posts)
-    hashtags?: Hashtag[]
+    hashtags: Hashtag[]
 
     @ApiProperty({ description: '좋아요 누른 유저 리스트' })
     @IsArray()

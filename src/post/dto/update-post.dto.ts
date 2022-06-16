@@ -3,5 +3,5 @@ import { PostEntity } from "src/_entity/post.entity";
 
 export class UpdatePostDto extends PickType(PostEntity, [
     'content',
-    'writer'
+    'hashtags'
 ] as const) {}
