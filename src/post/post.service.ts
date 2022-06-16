@@ -1,4 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { HashtagService } from 'src/hashtag/hashtag.service';
+import { ResponseProp } from 'src/_common/protocol';
+import { Hashtag } from 'src/_entity/hashtag.entity';
 import { PostEntity } from 'src/_entity/post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -8,7 +11,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostService {
     constructor(
         @Inject('POST_REPOSITORY')
-        private postRepository: Repository<PostEntity>
+        private readonly postRepository: Repository<PostEntity>,
+        private readonly hashtagService: HashtagService
     ) {}
 
     async getPostByUser(userId: number): Promise<PostEntity[]> {
@@ -46,13 +50,29 @@ export class PostService {
         return posts
     }
 
-    async createPost(userId: number, postData: {content: string}): Promise<PostEntity> {
+    async createPost(
+        userId: number,
+        content: string,
+        hashtags: string[]
+    ): Promise<ResponseProp> {
         console.log('Post service - createPost')
 
-        return await this.postRepository.save({
+        const result = await this.postRepository.save({
             writer: userId,
-            content: postData.content
+            content: content
         })
+        const createdPostId = result.id
+
+        // if(hashtags.length > 0) {
+        //     await this.hashtagService.createHashtag(createdPostId, hashtags)
+        // }
+
+        return {
+            status: 200,
+            result: {
+                success: true
+            }
+        }
     }
     
     async updatePost(postId: number, postData: UpdatePostDto): Promise<number> {

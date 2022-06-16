@@ -8,7 +8,7 @@ import { PostService } from './post.service';
 @Module({
   imports: [
     DatabaseModule,
-    HashtagModule
+    HashtagModule,
   ],
   exports: [PostService],
   controllers: [PostController],

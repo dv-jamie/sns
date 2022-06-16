@@ -65,10 +65,10 @@ export class PostController {
     @ApiOkResponse({ description: '게시글 등록 완료', type: ResponseDto })
     async createPost(
         @Request() req,
-        @Body() postData: {content: string}
+        @Body('content') content: string,
+        @Body('keywords') hashtags: string[]
     ): Promise<object> {
-        console.log(postData)
-        return await this.postService.createPost(req.user.id, postData)
+        return await this.postService.createPost(req.user.id, content, hashtags)
     }
 
     @UseGuards(JwtAuthGuard)
