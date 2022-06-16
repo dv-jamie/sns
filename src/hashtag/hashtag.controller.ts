@@ -1,4 +1,4 @@
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
     Controller,
     UseGuards,
@@ -13,6 +13,7 @@ import { HashtagService } from './hashtag.service';
 import { Hashtag } from 'src/_entity/hashtag.entity';
 
 @Controller('hashtag')
+@ApiTags('Hashtags')
 export class HashtagController {
     constructor(private readonly hashtagService: HashtagService) {}
 

@@ -9,12 +9,13 @@ import {
     Patch,
     Delete,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostService } from './post.service';
 
 @Controller('post')
+@ApiTags('Post')
 export class PostController {
     constructor(private readonly postService: PostService) {}
 

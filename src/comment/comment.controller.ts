@@ -9,12 +9,13 @@ import {
     Delete,
     Body,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Controller('comment')
+@ApiTags('Comment')
 export class CommentController {
     constructor(
         private readonly commentService: CommentService,

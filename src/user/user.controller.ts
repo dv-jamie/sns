@@ -7,13 +7,14 @@ import {
     Body,
     Patch,
 } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ResponseProp } from 'src/_common/protocol';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
+@ApiTags('User')
 export class UserController {
     constructor (
         private readonly userService: UserService,
