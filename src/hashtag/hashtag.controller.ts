@@ -13,13 +13,14 @@ import { HashtagService } from './hashtag.service';
 import { PostService } from 'src/post/post.service';
 import { PostEntity } from 'src/_entity/post.entity';
 import { CreateHashtagDto } from './dto/create-hashtag.dto';
+import { Hashtag } from 'src/_entity/hashtag.entity';
 
 @Controller('hashtag')
 @ApiTags('Hashtags')
 export class HashtagController {
     constructor(
         private readonly hashtagService: HashtagService,
-        private readonly postService: PostService
+        // private readonly postService: PostService
     ) {}
 
     @UseGuards(JwtAuthGuard)
@@ -29,7 +30,8 @@ export class HashtagController {
         @Request() req,
         @Param('id') hashtagId: number,
     ): Promise<PostEntity[]> {
-        return await this.postService.getPostByHashtag(hashtagId)
+        return await this.hashtagService.getPostsByHashtag(hashtagId)
+        // return await this.postService.getPostByHashtag(hashtagId)
     }
 
     // @UseGuards(JwtAuthGuard)

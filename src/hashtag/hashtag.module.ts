@@ -8,7 +8,7 @@ import { HashtagService } from './hashtag.service';
 @Module({
   imports: [
     DatabaseModule,
-    forwardRef(() => PostModule)
+    // forwardRef(() => PostModule)
   ],
   exports: [HashtagService],
   controllers: [HashtagController],
