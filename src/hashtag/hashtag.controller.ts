@@ -10,21 +10,25 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { HashtagService } from './hashtag.service';
-import { Hashtag } from 'src/_entity/hashtag.entity';
+import { PostService } from 'src/post/post.service';
+import { PostEntity } from 'src/_entity/post.entity';
 
 @Controller('hashtag')
 @ApiTags('Hashtags')
 export class HashtagController {
-    constructor(private readonly hashtagService: HashtagService) {}
+    constructor(
+        private readonly hashtagService: HashtagService,
+        private readonly postService: PostService
+    ) {}
 
     @UseGuards(JwtAuthGuard)
-    @Get('post/:id')
-    @ApiOperation({ summary: '게시글별 해시태그 조회' })
+    @Get(':id/post')
+    @ApiOperation({ summary: '해시태그별 게시글 조회' })
     async getHashtagsByPost(
         @Request() req,
-        @Param('id') postId: number,
-    ): Promise<Hashtag[]> {
-        return await this.hashtagService.getHashtagsByPost(postId)
+        @Param('id') hashtagId: number,
+    ): Promise<PostEntity[]> {
+        return await this.postService.getPostByHashtag(hashtagId)
     }
 
     @UseGuards(JwtAuthGuard)

@@ -7,7 +7,7 @@ import {
     CreateDateColumn,
     ManyToOne,
 } from 'typeorm';
-import { Post } from './post.entity';
+import { PostEntity } from './post.entity';
 import { User } from './user.entity';
 
 @Entity()
@@ -36,6 +36,6 @@ export class Comment {
     writer: number;
 
     @ApiProperty({ description: '게시글' })
-    @ManyToOne((type) => Post, (post) => post.id)
+    @ManyToOne((type) => PostEntity, (post) => post.id)
     post: number;
 }

@@ -11,7 +11,9 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseDto } from 'src/_common/dto/response.dto';
+import { Hashtag } from 'src/_entity/hashtag.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostService } from './post.service';
 
@@ -19,7 +21,10 @@ import { PostService } from './post.service';
 @ApiTags('Post')
 @ApiBearerAuth('accesskey')
 export class PostController {
-    constructor(private readonly postService: PostService) {}
+    constructor(
+        private readonly postService: PostService,
+        private readonly hashtagService: HashtagService
+    ) {}
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -43,14 +48,14 @@ export class PostController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/hashtag/:id')
-    @ApiOperation({ summary: '해시태그별 게시글 불러오기' })
-    @ApiOkResponse({ description: '게시글 불러오기 완료', type: ResponseDto })
+    @Get(':id/hashtag')
+    @ApiOperation({ summary: '게시글별 해시태그 불러오기' })
+    @ApiOkResponse({ description: '해시태그 불러오기 완료', type: ResponseDto })
     async getPostByHashtag(
         @Request() req,
         @Param('id') hashtagId: number
-    ): Promise<object> {
-        return await this.postService.getPostByHashtag(hashtagId)
+    ): Promise<Hashtag[]> {
+        return await this.hashtagService.getHashtagsByPost(hashtagId)
     }
 
     @UseGuards(JwtAuthGuard)

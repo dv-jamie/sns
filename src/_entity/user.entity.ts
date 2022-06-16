@@ -9,7 +9,7 @@ import {
     JoinTable,
 } from 'typeorm';
 import { Comment } from './comment.entity';
-import { Post } from './post.entity';
+import { PostEntity } from './post.entity';
 
 @Entity()
 export class User {
@@ -55,8 +55,8 @@ export class User {
 
     @ApiProperty({ description: '등록한 게시글 리스트' })
     @IsArray()
-    @OneToMany((type) => Post, (post) => post.writer)
-    posts: Post[]
+    @OneToMany((type) => PostEntity, (post) => post.writer)
+    posts: PostEntity[]
 
     @ApiProperty({ description: '등록한 댓글 리스트' })
     @IsArray()
@@ -65,7 +65,7 @@ export class User {
 
     @ApiProperty({ description: '좋아요 누른 게시글 리스트' })
     @IsArray()
-    @ManyToMany((type) => Post, (post) => post.likers)
+    @ManyToMany((type) => PostEntity, (post) => post.likers)
     @JoinTable()
-    likes: Post[]
+    likes: PostEntity[]
 }

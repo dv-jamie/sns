@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Post } from 'src/_entity/post.entity';
+import { PostEntity } from 'src/_entity/post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -8,10 +8,10 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostService {
     constructor(
         @Inject('POST_REPOSITORY')
-        private postRepository: Repository<Post>
+        private postRepository: Repository<PostEntity>
     ) {}
 
-    async getPostByUser(userId: number): Promise<Post[]> {
+    async getPostByUser(userId: number): Promise<PostEntity[]> {
         console.log('Post service - getPostByUser')
 
         // return await this.postRepository.find({
@@ -25,7 +25,7 @@ export class PostService {
             .getMany()
     }
 
-    async getPostById(postId: number): Promise<Post> {
+    async getPostById(postId: number): Promise<PostEntity> {
         const post = await this.postRepository.findOne({
             where: { id: postId }
         })
@@ -33,7 +33,7 @@ export class PostService {
         return post
     }
 
-    async getPostByHashtag(hashtagId: number): Promise<Post[]> {
+    async getPostByHashtag(hashtagId: number): Promise<PostEntity[]> {
         const posts = await this.postRepository.find({
             where: {
                 hashtags: {
@@ -46,7 +46,7 @@ export class PostService {
         return posts
     }
 
-    async createPost(userId: number, postData: {content: string}): Promise<Post> {
+    async createPost(userId: number, postData: {content: string}): Promise<PostEntity> {
         console.log('Post service - createPost')
 
         return await this.postRepository.save({

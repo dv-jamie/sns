@@ -14,7 +14,7 @@ import { Hashtag } from './hashtag.entity';
 import { User } from './user.entity';
 
 @Entity()
-export class Post {
+export class PostEntity {
     @ApiProperty({ description: '인덱스' })
     @PrimaryGeneratedColumn({
         type: 'int',

@@ -7,7 +7,7 @@ import {
     ManyToMany,
     JoinTable,
 } from 'typeorm';
-import { Post } from './post.entity';
+import { PostEntity } from './post.entity';
 
 @Entity()
 export class Hashtag {
@@ -29,9 +29,9 @@ export class Hashtag {
 
     @ApiProperty({ description: '게시글 리스트' })
     @IsNumber()
-    @ManyToMany((type) => Post, (post) => post.hashtags)
+    @ManyToMany((type) => PostEntity, (post) => post.hashtags)
     @JoinTable({
         name: 'hashtag_post'
     })
-    posts: Post[]
+    posts: PostEntity[]
 }
