@@ -4,9 +4,9 @@ import { PostService } from 'src/post/post.service';
 import { User } from 'src/_entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { bcryptConstant } from 'src/_common/constants';
 import { ResponseProp } from 'src/_common/protocol';
+import { LoginDto } from 'src/auth/dto/login.dto';
 
 @Injectable()
 export class UserService {
@@ -36,7 +36,7 @@ export class UserService {
         return result
     }
 
-    async findUser(userName: string, password: string): Promise<LoginUserDto> {
+    async findUser(userName: string, password: string): Promise<LoginDto> {
         console.log('User Service - findUser')
 
         const user = await this.userRepository.findOne({
