@@ -3,7 +3,7 @@ import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseProp } from 'src/_common/protocol';
 import { PostEntity } from 'src/_entity/post.entity';
 import { Repository } from 'typeorm';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostService {
@@ -13,40 +13,61 @@ export class PostService {
         private readonly hashtagService: HashtagService
     ) {}
 
-    async getPostByUser(userId: number): Promise<PostEntity[]> {
+    async getPostsByUser(userId: number): Promise<ResponseProp> {
         console.log('Post service - getPostByUser')
 
-        // return await this.postRepository.find({
-        //     relations: ['writer'],
-        //     where: { writer : { id: user['id'] }}
-        // })
+        try {
+            const posts = await this.postRepository.find({
+                where: { writer: { id: userId } },
+                relations: ['hashtags', 'comments', 'likers']
+            })
 
-        return await this.postRepository
-            .createQueryBuilder('post')
-            .where('writerId = :id', { id: userId })
-            .getMany()
+            return {
+                status: 200,
+                result: {
+                    success: posts
+                }
+            }
+        } catch(e) {
+            console.log(e)
+
+            return {
+                status: e.status,
+                result: {
+                    error: e.response.message
+                }
+            }
+        }
     }
 
-    async getPostById(postId: number): Promise<PostEntity> {
-        const post = await this.postRepository.findOne({
-            where: { id: postId }
-        })
+    async getPostById(postId: number): Promise<ResponseProp> {
+        try {
+            const post = await this.postRepository.findOne({
+                where: { id: postId },
+                relations: ['hashtags', 'comments', 'likers']
+            })
 
-        return post
+            if(!post) {
+                throw new NotFoundException('존재하지 않는 게시글입니다.')
+            }
+    
+            return {
+                status: 200,
+                result: {
+                    success: post
+                }
+            }
+        } catch(e) {
+            console.log(e)
+
+            return {
+                status: e.status,
+                result: {
+                    error: e.response.message
+                }
+            }
+        }
     }
-
-    // async getPostByHashtag(hashtagId: number): Promise<PostEntity[]> {
-    //     const posts = await this.postRepository.find({
-    //         where: {
-    //             hashtags: {
-    //                 id: hashtagId
-    //             }
-    //         },
-    //         relations: ['hashtags']
-    //     })
-
-    //     return posts
-    // }
 
     async createPost(
         userId: number,
@@ -55,62 +76,109 @@ export class PostService {
     ): Promise<ResponseProp> {
         console.log('Post service - createPost')
 
-        const result = await this.postRepository.save({
-            writer: userId,
-            content: content
-        })
-        const createdPostId = result.id
+        try {
+            const result = await this.postRepository.save({
+                writer: { id: userId },
+                content: content
+            })
+            const createdPostId = result.id
+    
+            if(!hashtags) {
+                return {
+                    status: 400,
+                    result: {
+                        error: '해시태그는 배열 형태여야 합니다.'
+                    }
+                }
+            }
 
-        if(!hashtags) {
+            // 해시태그가 있을 경우에만 실행
+            if(hashtags.length > 0) {
+                await this.hashtagService.createHashtag(createdPostId, hashtags)
+            }
+    
             return {
-                status: 400,
+                status: 200,
                 result: {
-                    error: '해시태그는 배열 형태여야 합니다.'
+                    success: '게시글 생성 완료'
+                }
+            }
+        } catch(e) {
+            console.log(e)
+
+            return {
+                status: e.status,
+                result: {
+                    error: e.response.message
                 }
             }
         }
 
-        // 해시태그가 있을 경우에만 실행
-        if(hashtags.length > 0) {
-            await this.hashtagService.createHashtag(createdPostId, hashtags)
-        }
+    }
+    
+    async updatePost(
+        postId: number,
+        postData: CreatePostDto
+    ): Promise<ResponseProp> {
+        console.log('Post service - updatePost')
 
-        return {
-            status: 200,
-            result: {
-                success: true
+        try {
+            const result = await this.postRepository.update(postId, {...postData})
+            const affected = result.affected
+    
+            if(affected === 0) {
+                throw new NotFoundException('존재하지 않는 게시글입니다.')
+            }
+    
+            return {
+                status: 200,
+                result: {
+                    success: `${affected}개 게시글 업데이트 완료`
+                }
+            }
+        } catch(e) {
+            console.log(e)
+
+            return {
+                status: e.status,
+                result: {
+                    error: e.response.message
+                }
             }
         }
     }
-    
-    async updatePost(postId: number, postData: UpdatePostDto): Promise<number> {
-        console.log('Post service - updatePost')
 
-        const result = await this.postRepository.update(postId, {...postData})
-        const affected = result.affected
-
-        if(affected === 0) {
-            throw new NotFoundException('존재하지 않는 게시글입니다.')
-        }
-
-        return affected
-    }
-
-    async deletePost(postId: number): Promise<number> {
+    async deletePost(postId: number): Promise<ResponseProp> {
         console.log('Post service - deletePost')
     
-        const result = await this.postRepository
-            .createQueryBuilder()
-            .delete()
-            .from('post')
-            .where("id = :id", { id: postId })
-            .execute()
-        const affected = result.affected
-        
-        if(affected === 0) {
-            throw new NotFoundException('존재하지 않는 게시글입니다.')
-        }
+        try {
+            const result = await this.postRepository
+                .createQueryBuilder()
+                .delete()
+                .from('post')
+                .where("id = :id", { id: postId })
+                .execute()
+            const affected = result.affected
+            
+            if(affected === 0) {
+                throw new NotFoundException('존재하지 않는 게시글입니다.')
+            }
+    
+            return {
+                status: 200,
+                result: {
+                    success: `${affected}개 게시글 삭제 완료`
+                }
+            }
+        } catch(e) {
+            console.log(e)
 
-        return affected
+            return {
+                status: e.status,
+                result: {
+                    error: e.response.message
+                }
+            }
+        }
     }
 }

@@ -14,15 +14,13 @@ import {
     ApiBody,
     ApiOkResponse,
     ApiOperation,
-    ApiParam,
     ApiTags
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseDto } from 'src/_common/dto/response.dto';
-import { Hashtag } from 'src/_entity/hashtag.entity';
+import { ResponseProp } from 'src/_common/protocol';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
 
 @Controller('post')
@@ -31,7 +29,6 @@ import { PostService } from './post.service';
 export class PostController {
     constructor(
         private readonly postService: PostService,
-        private readonly hashtagService: HashtagService
     ) {}
 
     @UseGuards(JwtAuthGuard)
@@ -40,8 +37,8 @@ export class PostController {
     @ApiOkResponse({ description: '게시글 불러오기 완료', type: ResponseDto })
     async getPostByUser(
         @Request() req,
-    ): Promise<object> {
-        return await this.postService.getPostByUser(req.user.id)
+    ): Promise<ResponseProp> {
+        return await this.postService.getPostsByUser(req.user.id)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -51,21 +48,9 @@ export class PostController {
     async getPostById(
         @Request() req,
         @Param('id') postId: number
-    ): Promise<object> {
+    ): Promise<ResponseProp> {
         return await this.postService.getPostById(postId)
     }
-
-    // @UseGuards(JwtAuthGuard)
-    // @Get(':id/hashtag')
-    // @ApiOperation({ summary: '게시글별 해시태그 불러오기' })
-    // @ApiParam({ name: 'id', description: '해당 게시글 아이디' })
-    // @ApiOkResponse({ description: '해시태그 불러오기 완료', type: ResponseDto })
-    // async getPostByHashtag(
-    //     @Request() req,
-    //     @Param('id') postId: number
-    // ): Promise<Hashtag[]> {
-    //     return await this.hashtagService.getHashtagsByPost(postId)
-    // }
 
     @UseGuards(JwtAuthGuard)
     @Post()
@@ -76,19 +61,19 @@ export class PostController {
         @Request() req,
         @Body('content') content: string,
         @Body('hashtags') hashtags: string[]
-    ): Promise<object> {
+    ): Promise<ResponseProp> {
         return await this.postService.createPost(req.user.id, content, hashtags)
     }
 
     @UseGuards(JwtAuthGuard)
     @Patch(':id')
     @ApiOperation({ summary: '게시글 수정' })
-    @ApiBody({ description: '게시글 내용과 해시태그 배열', type: UpdatePostDto })
+    @ApiBody({ description: '게시글 내용과 해시태그 배열', type: CreatePostDto })
     @ApiOkResponse({ description: '게시글 수정 완료', type: ResponseDto })
     async updatePost(
         @Param('id') postId: number,
         @Body() postData
-    ): Promise<number> {
+    ): Promise<ResponseProp> {
         return await this.postService.updatePost(postId, postData)
     }
 
@@ -98,7 +83,7 @@ export class PostController {
     @ApiOkResponse({ description: '게시글 삭제 완료', type: ResponseDto })
     async deletePost(
         @Param('id') postId: number,
-    ): Promise<number> {
+    ): Promise<ResponseProp> {
         return await this.postService.deletePost(postId)
     }
 }

@@ -35,7 +35,7 @@ export class UserController {
     async createUser(
         @Body()
         userData: CreateUserDto
-    ): Promise<object> {
+    ): Promise<ResponseProp> {
         return await this.userService.createUser(userData)
     }
 
@@ -57,7 +57,7 @@ export class UserController {
     async toggleLike(
         @Request() req,
         @Param('id') postId: number
-    ): Promise<boolean> {
+    ): Promise<ResponseProp> {
         return await this.userService.toggleLike(req.user.id, postId)
     }
 }

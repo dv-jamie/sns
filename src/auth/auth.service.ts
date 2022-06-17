@@ -9,14 +9,6 @@ export class AuthService {
         private readonly userService: UserService
     ) {}
 
-    // async createJwtToken(userData: LoginUserDto) {
-    //     const user = await this.userService.findUser(userData)
-
-    //     const jwtToken = this.jwtService.sign({ userId: user['id'] })
-
-    //     return jwtToken
-    // }
-
     async validateUser(userName: string, password: string): Promise<any> {
         console.log('Auth service - validateUser')
 
