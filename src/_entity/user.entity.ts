@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsString, Matches, MinLength } from 'class-validator';
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -20,8 +20,9 @@ export class User {
     })
     id: number;
 
-    @ApiProperty({ description: '유저 아이디' })
+    @ApiProperty({ description: '영문으로 시작, 숫자+언더바/하이픈 허용, 4~20자' })
     @IsString()
+    @Matches(/^[A-Za-z]{1}[A-Za-z0-9_-]{3,19}$/ )
     @Column('varchar', {
         name: 'userName',
         unique: true,
@@ -30,8 +31,9 @@ export class User {
     })
     userName: string;
 
-    @ApiProperty({ description: '유저 패스워드' })
+    @ApiProperty({ description: '문자, 숫자 1개 이상 포함, 8자 이상' })
     @IsString()
+    @Matches(/(?=.*\d)(?=.*[a-zA-ZS]).{8,}/)
     @Column('varchar', {
         name: 'password',
         nullable: false,

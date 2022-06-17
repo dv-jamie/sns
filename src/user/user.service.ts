@@ -19,6 +19,8 @@ export class UserService {
     async createUser(userData: CreateUserDto): Promise<CreateUserDto> {
         console.log('User Service - createUser')
 
+        console.log(userData.userName, userData.password)
+
         const hash = await bcrypt.hash(userData.password, bcryptConstant.saltOrRounds)
         const user = await this.userRepository.findOne({
             where: { userName: userData.userName }
