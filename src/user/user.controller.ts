@@ -51,7 +51,7 @@ export class UserController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Patch('like/:id')
+    @Patch('like/:postId')
     @ApiOperation({ summary: '게시글 좋아요 / 취소'})
     @ApiBearerAuth('accesskey')
     async toggleLike(
