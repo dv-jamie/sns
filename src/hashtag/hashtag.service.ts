@@ -31,7 +31,7 @@ export class HashtagService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -97,7 +97,7 @@ export class HashtagService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }

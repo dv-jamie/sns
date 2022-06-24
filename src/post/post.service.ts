@@ -34,7 +34,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -63,7 +63,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -109,7 +109,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -142,7 +142,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -176,7 +176,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
