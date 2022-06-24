@@ -18,6 +18,7 @@ import {
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ResponseProp } from 'src/_common/protocol';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -30,13 +31,24 @@ export class UserController {
         private readonly userService: UserService,
     ) {}
 
-    @Post('create-user')
+    @Post()
     @ApiOperation({ summary: '가입' })
     async createUser(
         @Body()
         userData: CreateUserDto
     ): Promise<ResponseProp> {
         return await this.userService.createUser(userData)
+    }
+
+    @Patch()
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: '내 정보 수정' })
+    async updateUser(
+        @Request() req,
+        @Body()
+        userData: UpdateUserDto
+    ): Promise<ResponseProp> {
+        return await this.userService.updateUser(req.user.id, userData)
     }
 
     @UseGuards(JwtAuthGuard)
