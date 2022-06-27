@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { bcryptConstant } from 'src/_common/constants';
 import { ResponseProp } from 'src/_common/protocol';
 import { LoginDto } from 'src/auth/dto/login.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -51,6 +52,29 @@ export class UserService {
             }
         }
     }
+
+   async updateUser(userId: number, userDto: UpdateUserDto): Promise<ResponseProp> {
+    console.log('User Service - updateUser')
+
+    try {
+        const result = await this.userRepository.update(userId, {...userDto})
+
+        return {
+            status: 200,
+            result: {
+                success: result
+            }
+        }
+    } catch(e) {
+        return {
+            status: e.status,
+            result: {
+                error: e.message
+            }
+        }
+    }
+
+   }
 
     async findUser(userName: string, password: string): Promise<LoginDto> {
         console.log('User Service - findUser')
