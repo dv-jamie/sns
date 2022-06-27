@@ -52,7 +52,9 @@ export class User {
 
     @ApiProperty({ description: '팔로워' })
     @IsArray()
-    @ManyToMany((type) => User, (user) => user.followings)
+    @ManyToMany((type) => User, (user) => user.followings, {
+        onDelete: 'CASCADE'
+    })
     followers: User[]
 
     @ApiProperty({ description: '등록한 게시글 리스트' })

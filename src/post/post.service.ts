@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { HashtagService } from 'src/hashtag/hashtag.service';
 import { ResponseProp } from 'src/_common/protocol';
 import { PostEntity } from 'src/_entity/post.entity';
@@ -34,7 +34,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -63,7 +63,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -77,20 +77,15 @@ export class PostService {
         console.log('Post service - createPost')
 
         try {
+            if(typeof hashtags !== 'object') {
+                throw new HttpException('해시태그는 배열 형태여야 합니다.', 400);
+            }
+
             const result = await this.postRepository.save({
                 writer: { id: userId },
                 content: content
             })
             const createdPostId = result.id
-    
-            if(!hashtags) {
-                return {
-                    status: 400,
-                    result: {
-                        error: '해시태그는 배열 형태여야 합니다.'
-                    }
-                }
-            }
 
             // 해시태그가 있을 경우에만 실행
             if(hashtags.length > 0) {
@@ -109,7 +104,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -142,7 +137,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }
@@ -155,7 +150,7 @@ export class PostService {
             const result = await this.postRepository
                 .createQueryBuilder()
                 .delete()
-                .from('post')
+                .from('post_entity')
                 .where("id = :id", { id: postId })
                 .execute()
             const affected = result.affected
@@ -176,7 +171,7 @@ export class PostService {
             return {
                 status: e.status,
                 result: {
-                    error: e.response.message
+                    error: e.message
                 }
             }
         }

@@ -32,10 +32,14 @@ export class Comment {
     createdAt: string;
 
     @ApiProperty({ description: '댓글 작성자' })
-    @ManyToOne((type) => User, (user) => user.id)
+    @ManyToOne((type) => User, (user) => user.id, {
+        onDelete: 'CASCADE'
+    })
     writer: number;
 
     @ApiProperty({ description: '게시글' })
-    @ManyToOne((type) => PostEntity, (post) => post.id)
+    @ManyToOne((type) => PostEntity, (post) => post.id, {
+        onDelete: 'CASCADE'
+    })
     post: number;
 }

@@ -37,7 +37,10 @@ export class PostEntity {
 
     @ApiProperty({ description: '게시글 작성자' })
     @IsNumber()
-    @ManyToOne((type) => User, (user) => user.posts, {eager: true})
+    @ManyToOne((type) => User, (user) => user.posts, {
+        eager: true,
+        onDelete: 'SET NULL'
+    })
     writer: User;
 
     @ApiProperty({ description: '댓글 리스트' })
@@ -47,11 +50,15 @@ export class PostEntity {
 
     @ApiProperty({ description: '해시태그 리스트' })
     @IsArray()
-    @ManyToMany((type) => Hashtag, (hashtag) => hashtag.posts)
+    @ManyToMany((type) => Hashtag, (hashtag) => hashtag.posts, {
+        onDelete: 'CASCADE'
+    })
     hashtags: Hashtag[]
 
     @ApiProperty({ description: '좋아요 누른 유저 리스트' })
     @IsArray()
-    @ManyToMany((type) => User, (user) => user.likes)
+    @ManyToMany((type) => User, (user) => user.likes, {
+        onDelete: 'CASCADE'
+    })
     likers?: User;
 }

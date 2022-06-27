@@ -28,7 +28,7 @@ export class Hashtag {
     keyword: string
 
     @ApiProperty({ description: '게시글 리스트' })
-    @IsNumber()
+    @IsArray()
     @ManyToMany((type) => PostEntity, (post) => post.hashtags)
     @JoinTable({
         name: 'hashtag_post'

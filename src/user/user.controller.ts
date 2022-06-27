@@ -56,7 +56,7 @@ export class UserController {
     @ApiBearerAuth('accesskey')
     async toggleLike(
         @Request() req,
-        @Param('id') postId: number
+        @Param('postId') postId: number
     ): Promise<ResponseProp> {
         return await this.userService.toggleLike(req.user.id, postId)
     }
